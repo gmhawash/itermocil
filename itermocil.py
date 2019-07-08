@@ -65,7 +65,7 @@ class Itermocil(object):
         firstprofile = "default"
         try:
             fw = self.parsed_config["windows"][0]
-            firstprofile = fw.get("profile",firstprofile)
+            firstprofile = os.getenv('PROFILE') or fw.get("profile", firstprofile)
             if "panes" in fw and len(fw["panes"]) > 0 and type(fw["panes"][0]) == dict:
                 firstprofile = fw["panes"][0].get("profile",firstprofile)
         except:
@@ -534,7 +534,7 @@ class Itermocil(object):
                 window_profile = window['profile']
                 window_profile_spec = True
             else:
-                window_profile = "default" 
+                window_profile = "default"
                 window_profile_spec = False
 
             # Default Behavior: no pane specifies profile and no profile in window => same for panes
@@ -550,7 +550,7 @@ class Itermocil(object):
 
             if panes_have_profile:
                 paneprofiles = [p.get("profile",window_profile) if type(p) == dict else window_profile for p in window.get("panes",[])]
-            else:                
+            else:
                 # empty means same
                 paneprofiles = ["" for p in window.get("panes",[])]
 
@@ -562,7 +562,7 @@ class Itermocil(object):
                     firstprofile = window_profile
 
                 # first TAB has been created before this function, so apply window profile
-                ps = "default profile" if firstprofile == "default" else "profile \"%s\"" % firstprofile                
+                ps = "default profile" if firstprofile == "default" else "profile \"%s\"" % firstprofile
                 if self.new_iterm:
                     self.applescript.append('tell current window')
                     self.applescript.append('create tab with %s' % ps)
